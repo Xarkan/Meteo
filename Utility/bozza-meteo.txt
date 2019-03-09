@@ -1,0 +1,55 @@
+
+-programmino da scaricare sul raspberry per la configurazione dei sensori
+
+-se l'utente sceglie di avere db anche sul server, alla fine della configurazione
+accede da terminale col suo profilo che ha già creato sul sito e copia la struttura del
+database sul server. Ogni volta che viene fatta una misura, questa viene salvata in locale sul
+database e inviata tramite post al server. L'utente potrà accedere sul server e vedere i dati
+associati alla propria stazione.
+
+
+
+- accesso sulla stazione
+- credenziali salvate in locale
+- viene confermato l'accesso sul server e creata una sessione associata alla stazione
+- post con la struttura del database e il suo nome
+- per poter gestire più stazioni associate ad un solo account, è necessario salvare l'id 
+associato alla stazione su quest'ultima (penso nel file dove sono salvate mail e pass) 
+- viene creata nuova stazione e id associato
+- ogni nuova misura effettuata viene salvata nel database locale e inviata con 
+l'autenticazione della sessione al server tramite post http
+
+
+
+
+utente-> contiene gli utenti
+stazione-> contiene i dati della stazione e il proprietario (nome unico per ogni stazione)
+
+ogni volta che si crea una nuova stazione, viene creata una table chiamata come la stazione
+che raccoglie tutte le misure
+
+------------------------------
+<form ....>
+<input name="person[0][first_name]" value="john" />
+<input name="person[0][last_name]" value="smith" />
+...
+<input name="person[1][first_name]" value="jane" />
+<input name="person[1][last_name]" value="jones" />
+</form>
+
+<?php
+var_dump($_POST['person']);
+
+array (
+0 => array('first_name'=>'john','last_name'=>'smith'),
+1 => array('first_name'=>'jane','last_name'=>'jones'),
+)
+?>
+
+
+controlli db nel costruttore (exist) con $config['db']['enabled'] = true; 
+
+$user->save();
+$user->load();
+
+estendono mainobject 
