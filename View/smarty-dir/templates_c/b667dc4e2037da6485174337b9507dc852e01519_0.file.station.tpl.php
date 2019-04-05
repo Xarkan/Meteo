@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.33, created on 2019-03-08 15:54:33
+/* Smarty version 3.1.33, created on 2019-03-20 17:00:36
   from '/opt/lampp/htdocs/Meteo/View/smarty-dir/templates/station.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.33',
-  'unifunc' => 'content_5c8282292d94f4_42597906',
+  'unifunc' => 'content_5c9263a4679f19_07138671',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'b667dc4e2037da6485174337b9507dc852e01519' => 
     array (
       0 => '/opt/lampp/htdocs/Meteo/View/smarty-dir/templates/station.tpl',
-      1 => 1552056867,
+      1 => 1553097629,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5c8282292d94f4_42597906 (Smarty_Internal_Template $_smarty_tpl) {
+function content_5c9263a4679f19_07138671 (Smarty_Internal_Template $_smarty_tpl) {
 ?><!doctype html>
 <html lang="en">
  <head>
@@ -48,33 +48,44 @@ function content_5c8282292d94f4_42597906 (Smarty_Internal_Template $_smarty_tpl)
 
 <div class="card info-card">
   <div class="card-header">
-    Last Measure: May 27 21:35
+    Last Measure: <?php echo $_smarty_tpl->tpl_vars['lastMeasure']->value['time'];?>
+
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Temperature: 17.5 °C</li>
+    <li class="list-group-item">Temperature: <?php echo $_smarty_tpl->tpl_vars['lastMeasure']->value['temp'];?>
+ °C</li>
     <li class="list-group-item">Humidity: 80%</li>
     <li class="list-group-item">Wind: 20 m/s (97°)</li>
     <li class="list-group-item">Rain: 12 mm</li>
-    <li class="list-group-item">Pressure: 1010 hPa</li>
+    <li class="list-group-item">Pressure: <?php echo $_smarty_tpl->tpl_vars['lastMeasure']->value['pressure'];?>
+ hPa</li>
   </ul>
 </div>
 
 <div class="card info-card" style="width: 18rem;">
   <div class="card-header">
-    Name: Monte Calvo
+    Station: <?php echo $_smarty_tpl->tpl_vars['name']->value;?>
+
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Created on: 2016-09-01</li>
-    <li class="list-group-item">Altitude: 700m</li>
-    <li class="list-group-item">Latitude: 42.35</li>
-    <li class="list-group-item">Longitude: 13.27</li> 
-    <li class="list-group-item">See on <a href="https://www.google.com/maps">Google Maps</li> 
+    <li class="list-group-item">Operating since: <?php echo $_smarty_tpl->tpl_vars['firstMeasure']->value;?>
+</li>
+    <li class="list-group-item">Altitude: <?php echo $_smarty_tpl->tpl_vars['altitude']->value;?>
+ m</li>
+    <li class="list-group-item">Latitude: <?php echo $_smarty_tpl->tpl_vars['latitude']->value;?>
+°</li>
+    <li class="list-group-item">Longitude: <?php echo $_smarty_tpl->tpl_vars['longitude']->value;?>
+°</li> 
+    <li class="list-group-item">See on <a href="https://www.google.com/maps/place/<?php echo $_smarty_tpl->tpl_vars['latitude']->value;?>
+N+<?php echo $_smarty_tpl->tpl_vars['longitude']->value;?>
+E/@<?php echo $_smarty_tpl->tpl_vars['latitude']->value;?>
+,<?php echo $_smarty_tpl->tpl_vars['longitude']->value;?>
+,16z/data=!3m1!1e3" target="_blank">Google Maps</li> 
 
   </ul>
 </div>
 
 </div>
-
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 <a class="navbar-brand" href="../home">MeteoTopper</a>
@@ -117,38 +128,36 @@ for ($__section_nr_0_iteration = 1, $_smarty_tpl->tpl_vars['__smarty_section_nr'
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link active" id="nav-item-charts" onclick="selectCard('charts');">Charts</a>
+        <a class="nav-link active" id="nav-item-charts" onclick="selectCard(<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+,'charts'); loadCharts(<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+,<?php echo $_smarty_tpl->tpl_vars['chartlimit']->value;?>
+);">Charts</a>
       </li>
        <li class="nav-item">
-        <a class="nav-link" id="nav-item-photos" onclick="selectCard('photos');">Photos</a>
+        <a class="nav-link" id="nav-item-photos" onclick="selectCard(<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+,'photos'); loadPhotos(<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+);">Photos</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="nav-item-table" onclick="selectCard('table');">Table</a>
+        <a class="nav-link" id="nav-item-table" onclick="selectCard(<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+,'table'); loadTable(<?php echo $_smarty_tpl->tpl_vars['id']->value;?>
+);">Table</a>
       </li>
     </ul>
   </div>
 
 
   <div class="card-body">
-
-    <div id="card-charts">
-        <?php
-$_smarty_tpl->tpl_vars['k'] = new Smarty_Variable(null, $_smarty_tpl->isRenderingCache);$_smarty_tpl->tpl_vars['k']->step = 1;$_smarty_tpl->tpl_vars['k']->total = (int) ceil(($_smarty_tpl->tpl_vars['k']->step > 0 ? $_smarty_tpl->tpl_vars['chartlimit']->value+1 - (1) : 1-($_smarty_tpl->tpl_vars['chartlimit']->value)+1)/abs($_smarty_tpl->tpl_vars['k']->step));
-if ($_smarty_tpl->tpl_vars['k']->total > 0) {
-for ($_smarty_tpl->tpl_vars['k']->value = 1, $_smarty_tpl->tpl_vars['k']->iteration = 1;$_smarty_tpl->tpl_vars['k']->iteration <= $_smarty_tpl->tpl_vars['k']->total;$_smarty_tpl->tpl_vars['k']->value += $_smarty_tpl->tpl_vars['k']->step, $_smarty_tpl->tpl_vars['k']->iteration++) {
-$_smarty_tpl->tpl_vars['k']->first = $_smarty_tpl->tpl_vars['k']->iteration === 1;$_smarty_tpl->tpl_vars['k']->last = $_smarty_tpl->tpl_vars['k']->iteration === $_smarty_tpl->tpl_vars['k']->total;?>    
-      <div class="container chart-container border-bottom border-secondary"> 
+    <div class="container chart-container border-bottom border-secondary">   
       <!----------------------chart-bar----------------------->  
         <div class="container chart-bar">
 
           <div class="container mydropdown-input chart-btn">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                <label class="input-group-text" for="variable<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
-">variable</label>
+                <label class="input-group-text" for="variable1">variable</label>
               </div>
-            <select class="custom-select" id="variable<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
-">
+            <select class="custom-select" id="variable1">
               <!--qui ci vuole il ciclo smarty-->
               <?php
 $__section_nr_1_loop = (is_array(@$_loop=$_smarty_tpl->tpl_vars['sensors']->value) ? count($_loop) : max(0, (int) $_loop));
@@ -168,7 +177,6 @@ for ($__section_nr_1_iteration = 1, $_smarty_tpl->tpl_vars['__smarty_section_nr'
             </div>
           </div>
 
-          <?php if ($_smarty_tpl->tpl_vars['k']->value == 1) {?>
           <div class="container mydropdown-input chart-btn">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
@@ -187,30 +195,58 @@ for ($__section_nr_1_iteration = 1, $_smarty_tpl->tpl_vars['__smarty_section_nr'
             </div>
           </div>
 
+          <div class="container mydropdown-input mysubmit">
+                <button id="load-btn" class="btn btn-primary">Load</button>
+              </div>
+        </div>   
+      </div>
+
+    <div id="card-charts">
+
+      <!------------------------chart----------------------->
+       <div class="container chart-container border-bottom border-secondary">
+       <div class="container chartContainer" id="chartContainer1"></div>  
+        </div>  
+        <?php
+$_smarty_tpl->tpl_vars['k'] = new Smarty_Variable(null, $_smarty_tpl->isRenderingCache);$_smarty_tpl->tpl_vars['k']->step = 1;$_smarty_tpl->tpl_vars['k']->total = (int) ceil(($_smarty_tpl->tpl_vars['k']->step > 0 ? $_smarty_tpl->tpl_vars['chartlimit']->value+1 - (2) : 2-($_smarty_tpl->tpl_vars['chartlimit']->value)+1)/abs($_smarty_tpl->tpl_vars['k']->step));
+if ($_smarty_tpl->tpl_vars['k']->total > 0) {
+for ($_smarty_tpl->tpl_vars['k']->value = 2, $_smarty_tpl->tpl_vars['k']->iteration = 1;$_smarty_tpl->tpl_vars['k']->iteration <= $_smarty_tpl->tpl_vars['k']->total;$_smarty_tpl->tpl_vars['k']->value += $_smarty_tpl->tpl_vars['k']->step, $_smarty_tpl->tpl_vars['k']->iteration++) {
+$_smarty_tpl->tpl_vars['k']->first = $_smarty_tpl->tpl_vars['k']->iteration === 1;$_smarty_tpl->tpl_vars['k']->last = $_smarty_tpl->tpl_vars['k']->iteration === $_smarty_tpl->tpl_vars['k']->total;?>        
+        <div class="container chart-bar">
+
           <div class="container mydropdown-input chart-btn">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                <label class="input-group-text" for="resolution">resolution</label>
+                <label class="input-group-text" for="variable<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
+">variable</label>
               </div>
-              <select class="custom-select" id="resolution">
-                <option value="max" selected>max</option>
-                <option value="hour">hour</option>
-                <option value="day">day</option>
-              </select>
+            <select class="custom-select" id="variable<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
+">
+              <!--qui ci vuole il ciclo smarty-->
+              <?php
+$__section_nr_2_loop = (is_array(@$_loop=$_smarty_tpl->tpl_vars['sensors']->value) ? count($_loop) : max(0, (int) $_loop));
+$__section_nr_2_total = $__section_nr_2_loop;
+$_smarty_tpl->tpl_vars['__smarty_section_nr'] = new Smarty_Variable(array());
+if ($__section_nr_2_total !== 0) {
+for ($__section_nr_2_iteration = 1, $_smarty_tpl->tpl_vars['__smarty_section_nr']->value['index'] = 0; $__section_nr_2_iteration <= $__section_nr_2_total; $__section_nr_2_iteration++, $_smarty_tpl->tpl_vars['__smarty_section_nr']->value['index']++){
+?> 
+                <option value="<?php echo $_smarty_tpl->tpl_vars['sensors']->value[(isset($_smarty_tpl->tpl_vars['__smarty_section_nr']->value['index']) ? $_smarty_tpl->tpl_vars['__smarty_section_nr']->value['index'] : null)]['COLUMN_NAME'];?>
+"><?php echo $_smarty_tpl->tpl_vars['sensors']->value[(isset($_smarty_tpl->tpl_vars['__smarty_section_nr']->value['index']) ? $_smarty_tpl->tpl_vars['__smarty_section_nr']->value['index'] : null)]['COLUMN_NAME'];?>
+</option>
+              <?php
+}
+}
+?>
+            </select>
             </div>
-          </div>
-          <?php }?>
-          <div class="container mydropdown-input mysubmit">
-                <button id="load-btn<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
-" class="btn btn-primary">Load</button>
-              </div>
-        </div>   
-      <!------------------------chart----------------------->
-        <div class="container chartContainer" id="chartContainer<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
-"></div>
-      
+          </div>   
       </div>
-      <?php }
+      <div class="container chart-container border-bottom border-secondary">
+       <div class="container chartContainer" id="chartContainer<?php echo $_smarty_tpl->tpl_vars['k']->value;?>
+"></div>  
+        </div>  
+
+    <?php }
 }
 ?>
       <!---------------------------------------------------->
@@ -220,57 +256,32 @@ for ($__section_nr_1_iteration = 1, $_smarty_tpl->tpl_vars['__smarty_section_nr'
       </div>
     </div>
 
-    <div id="card-photos" style="display: none;">
-       <div class="container page-top">
+    <div id="card-photos" style="display: none;">    
+
+        <div class="container page-top">
         <div class="row">
             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/62307/air-bubbles-diving-underwater-blow-62307.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/62307/air-bubbles-diving-underwater-blow-62307.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid "  alt="">
-                   
-                </a>
+              <a href="/Meteo/View/style/station/images/monte_calvo.jpg" class="fancybox" rel="ligthbox">
+                <img src="/Meteo/View/style/station/images/monte_calvo.jpg" class="zoom img-fluid " alt="">
+              </a>
             </div>
             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/38238/maldives-ile-beach-sun-38238.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"  class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/38238/maldives-ile-beach-sun-38238.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid"  alt="">
-                </a>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/158827/field-corn-air-frisch-158827.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/158827/field-corn-air-frisch-158827.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/302804/pexels-photo-302804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/302804/pexels-photo-302804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/1038914/pexels-photo-1038914.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/1038914/pexels-photo-1038914.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/56005/fiji-beach-sand-palm-trees-56005.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/56005/fiji-beach-sand-palm-trees-56005.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/1038002/pexels-photo-1038002.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/1038002/pexels-photo-1038002.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>         
+              <a href="/Meteo/View/style/station/images/monte_calvo.jpg"  class="fancybox" rel="ligthbox">
+                <img  src="/Meteo/View/style/station/images/monte_calvo.jpg" class="zoom img-fluid" alt="">
+              </a>
+            </div>                 
        </div>
+    </div>
+
+    </div>
+
+    <div id="card-table" style="display: none;">
+      <div class="container">
+
+      <div id="table-container"></div> 
+    </div>
+    <div class="container">
+      <button onclick="loadMore();" class="btn btn-primary">Load More</button>
     </div>
 
     </div>

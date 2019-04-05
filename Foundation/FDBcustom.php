@@ -35,10 +35,15 @@ class FDBcustom {
         return $vars;
     }
 
-    public function limit($station, $num) {
+    public function limit($station, $num, $desc = true) {
         $dbname = 'station'.strval($station->getId());
         $fc = new FConnection($dbname);
-        $sql = 'SELECT * FROM measure ORDER BY time DESC LIMIT '.$num;
+        if ($desc) {
+            $x = 'DESC ';
+        }else{
+            $x = '';
+        }
+        $sql = 'SELECT * FROM measure ORDER BY time '.$x.'LIMIT '.$num;
 
         $statement = $fc->connection->prepare($sql);
         $statement->bindParam(1, $dbname);

@@ -49,9 +49,9 @@ class FAssembler
 				if ($obj instanceof EStation) {
 					$conditions[] = new FCondition('mail', $obj->getUser()->getMail());
 				}
-				if ($obj instanceof EMeasure) {
+				if ($obj instanceof EMeasure) {			
 					$conditions[] = new FCondition('time', $range['from']->format(DateTime::ATOM), '>');
-					$conditions[] = new FCondition('time', $range['to']->format(DateTime::ATOM), '<');
+					$conditions[] = new FCondition('time', $range['to']->format(DateTime::ATOM), '<');		
 				}
 				break;
 
@@ -155,16 +155,20 @@ class FAssembler
 			}
 			if ($obj instanceof EMeasure) {
 				$newObj->station = '';//$obj->getStation();
-				$newObj->time = new DateTime($response[$i]['time']);
+				$newObj->time = new DateTime($response[$i]['time']); 
 				$k = 0;
+				//bisogna aggiungere un ciclo per l'array dei sensori
 				foreach ($response[$i] as $name => $v1) {
-					if ($name != 'time' && $name == $obj->values[0]->sensor->variable) {
-						$sens = new ESensor($name,'');
-						$c = new ECapture($sens,$v1);
-						$newObj->values[$k] = $c;
-						$k++;
-					}				
-				}
+					for ($j=0; $j < count($obj->values); $j++) { 
+						if ($name == $obj->values[$j]->sensor->variable) {
+							$sens = new ESensor($name,'');
+							$c = new ECapture($sens,$v1);
+							$newObj->values[$k] = $c;
+							$k++;
+						}	
+					}
+								
+				}								
 			}
 			$return[] = $newObj;
 			unset($newObj);

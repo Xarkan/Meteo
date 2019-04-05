@@ -23,33 +23,32 @@
 
 <div class="card info-card">
   <div class="card-header">
-    Last Measure: May 27 21:35
+    Last Measure: {$lastMeasure.time}
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Temperature: 17.5 °C</li>
+    <li class="list-group-item">Temperature: {$lastMeasure.temp} °C</li>
     <li class="list-group-item">Humidity: 80%</li>
     <li class="list-group-item">Wind: 20 m/s (97°)</li>
     <li class="list-group-item">Rain: 12 mm</li>
-    <li class="list-group-item">Pressure: 1010 hPa</li>
+    <li class="list-group-item">Pressure: {$lastMeasure.pressure} hPa</li>
   </ul>
 </div>
 
 <div class="card info-card" style="width: 18rem;">
   <div class="card-header">
-    Name: Monte Calvo
+    Station: {$name}
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">Created on: 2016-09-01</li>
-    <li class="list-group-item">Altitude: 700m</li>
-    <li class="list-group-item">Latitude: 42.35</li>
-    <li class="list-group-item">Longitude: 13.27</li> 
-    <li class="list-group-item">See on <a href="https://www.google.com/maps">Google Maps</li> 
+    <li class="list-group-item">Operating since: {$firstMeasure}</li>
+    <li class="list-group-item">Altitude: {$altitude} m</li>
+    <li class="list-group-item">Latitude: {$latitude}°</li>
+    <li class="list-group-item">Longitude: {$longitude}°</li> 
+    <li class="list-group-item">See on <a href="https://www.google.com/maps/place/{$latitude}N+{$longitude}E/@{$latitude},{$longitude},16z/data=!3m1!1e3" target="_blank">Google Maps</li> 
 
   </ul>
 </div>
 
 </div>
-
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 <a class="navbar-brand" href="../home">MeteoTopper</a>
@@ -80,32 +79,29 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link active" id="nav-item-charts" onclick="selectCard('charts');">Charts</a>
+        <a class="nav-link active" id="nav-item-charts" onclick="selectCard({$id},'charts'); loadCharts({$id},{$chartlimit});">Charts</a>
       </li>
        <li class="nav-item">
-        <a class="nav-link" id="nav-item-photos" onclick="selectCard('photos');">Photos</a>
+        <a class="nav-link" id="nav-item-photos" onclick="selectCard({$id},'photos'); loadPhotos({$id});">Photos</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="nav-item-table" onclick="selectCard('table');">Table</a>
+        <a class="nav-link" id="nav-item-table" onclick="selectCard({$id},'table'); loadTable({$id});">Table</a>
       </li>
     </ul>
   </div>
 
 
   <div class="card-body">
-
-    <div id="card-charts">
-        {for $k=1 to $chartlimit}    
-      <div class="container chart-container border-bottom border-secondary"> 
+    <div class="container chart-container border-bottom border-secondary">   
       <!----------------------chart-bar----------------------->  
         <div class="container chart-bar">
 
           <div class="container mydropdown-input chart-btn">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                <label class="input-group-text" for="variable{$k}">variable</label>
+                <label class="input-group-text" for="variable1">variable</label>
               </div>
-            <select class="custom-select" id="variable{$k}">
+            <select class="custom-select" id="variable1">
               <!--qui ci vuole il ciclo smarty-->
               {section name=nr loop=$sensors} 
                 <option value="{$sensors[nr].COLUMN_NAME}">{$sensors[nr].COLUMN_NAME}</option>
@@ -114,7 +110,6 @@
             </div>
           </div>
 
-          {if $k == 1}
           <div class="container mydropdown-input chart-btn">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
@@ -133,28 +128,40 @@
             </div>
           </div>
 
+          <div class="container mydropdown-input mysubmit">
+                <button id="load-btn" class="btn btn-primary">Load</button>
+              </div>
+        </div>   
+      </div>
+
+    <div id="card-charts">
+
+      <!------------------------chart----------------------->
+       <div class="container chart-container border-bottom border-secondary">
+       <div class="container chartContainer" id="chartContainer1"></div>  
+        </div>  
+        {for $k=2 to $chartlimit}        
+        <div class="container chart-bar">
+
           <div class="container mydropdown-input chart-btn">
             <div class="input-group mb-3">
               <div class="input-group-prepend">
-                <label class="input-group-text" for="resolution">resolution</label>
+                <label class="input-group-text" for="variable{$k}">variable</label>
               </div>
-              <select class="custom-select" id="resolution">
-                <option value="max" selected>max</option>
-                <option value="hour">hour</option>
-                <option value="day">day</option>
-              </select>
+            <select class="custom-select" id="variable{$k}">
+              <!--qui ci vuole il ciclo smarty-->
+              {section name=nr loop=$sensors} 
+                <option value="{$sensors[nr].COLUMN_NAME}">{$sensors[nr].COLUMN_NAME}</option>
+              {/section}
+            </select>
             </div>
-          </div>
-          {/if}
-          <div class="container mydropdown-input mysubmit">
-                <button id="load-btn{$k}" class="btn btn-primary">Load</button>
-              </div>
-        </div>   
-      <!------------------------chart----------------------->
-        <div class="container chartContainer" id="chartContainer{$k}"></div>
-      
+          </div>   
       </div>
-      {/for}
+      <div class="container chart-container border-bottom border-secondary">
+       <div class="container chartContainer" id="chartContainer{$k}"></div>  
+        </div>  
+
+    {/for}
       <!---------------------------------------------------->
 
       <div class="container chart-btn1">
@@ -162,57 +169,32 @@
       </div>
     </div>
 
-    <div id="card-photos" style="display: none;">
-       <div class="container page-top">
+    <div id="card-photos" style="display: none;">    
+
+        <div class="container page-top">
         <div class="row">
             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/62307/air-bubbles-diving-underwater-blow-62307.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/62307/air-bubbles-diving-underwater-blow-62307.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid "  alt="">
-                   
-                </a>
+              <a href="/Meteo/View/style/station/images/monte_calvo.jpg" class="fancybox" rel="ligthbox">
+                <img src="/Meteo/View/style/station/images/monte_calvo.jpg" class="zoom img-fluid " alt="">
+              </a>
             </div>
             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/38238/maldives-ile-beach-sun-38238.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"  class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/38238/maldives-ile-beach-sun-38238.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid"  alt="">
-                </a>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/158827/field-corn-air-frisch-158827.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/158827/field-corn-air-frisch-158827.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/302804/pexels-photo-302804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/302804/pexels-photo-302804.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/1038914/pexels-photo-1038914.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/1038914/pexels-photo-1038914.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/414645/pexels-photo-414645.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/56005/fiji-beach-sand-palm-trees-56005.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/56005/fiji-beach-sand-palm-trees-56005.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>
-            
-             <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a href="https://images.pexels.com/photos/1038002/pexels-photo-1038002.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="fancybox" rel="ligthbox">
-                    <img  src="https://images.pexels.com/photos/1038002/pexels-photo-1038002.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" class="zoom img-fluid "  alt="">
-                </a>
-            </div>         
+              <a href="/Meteo/View/style/station/images/monte_calvo.jpg"  class="fancybox" rel="ligthbox">
+                <img  src="/Meteo/View/style/station/images/monte_calvo.jpg" class="zoom img-fluid" alt="">
+              </a>
+            </div>                 
        </div>
+    </div>
+
+    </div>
+
+    <div id="card-table" style="display: none;">
+      <div class="container">
+
+      <div id="table-container"></div> 
+    </div>
+    <div class="container">
+      <button onclick="loadMore();" class="btn btn-primary">Load More</button>
     </div>
 
     </div>

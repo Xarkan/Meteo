@@ -24,32 +24,43 @@ class EStation
 		$this->sensors = $sensors;
 	}
 
-	public function computeData($from, $to, $resolution) {
+	public function computeData($from, $to) {
 		$dbm = USingleton::getInstance('FDBmanager');
-        $sensors = $this->sensors;
-        $caps[0] = new ECapture($sensors[0], '');
-        $m = new EMeasure($this, '', $caps);
         
-        if ($from->format('Y-m-d') == $to->format('Y-m-d')) {
-            $from = new DateTime($from->format('Y-m-d').' 00:00:00');
-            $to = new DateTime($to->format('Y-m-d').'23:59:59');
+        //-----------formattazione data------------
+        $from = new DateTime($from->format('Y-m-d').' 00:00:00');
+        $to = new DateTime($to->format('Y-m-d').'23:59:59');
+        $f = clone $from;
+        $f->add(new DateInterval('P7D'));
+        if($f > $to) {
+            $resolution = 'max';
+        }else{
+            $f->add(new DateInterval('P23D'));
+            if ($f > $to) {
+                $resolution = 'hour';
+            }else{
+                $resolution = 'day';
+            }
         }
-        
+        //-------query al database-------
+        $sensors = $this->sensors;
+        for ($i=0; $i < count($this->sensors); $i++) { 
+            $caps[$i] = new ECapture($sensors[$i], '');
+        }        
+        $m = new EMeasure($this, '', $caps);       
         $result = $dbm->list($m, array('from' => $from, 'to' => $to));
-
+        //--------------------------------
 
         $sens[0][] = new ESensor('time','');
 		$response = [];
         for ($s=0; $s < count($sensors); $s++) { 
-            $sens[0][] = $dbm->load($sensors[$s]);
+            $sens[0][$s+1] = $dbm->load($sensors[$s]);
             if ($resolution == 'max') {
                 for ($i=0; $i < count($result); $i++) {                         
-                        $values[0] = $result[$i]->time->format('Y-m-d H:i');//('M j H:i');
-                        $values[$s+1] = $result[$i]->values[$s]->value;
-                        $response[$i] = $values;
-                        unset($values);
-                    }
-                    $s = count($sensors);
+                    $response[$i][0] = $result[$i]->time->format('Y-m-d H:i');//('M j H:i');
+                    $response[$i][$s+1] = $result[$i]->values[$s]->value;
+                                    
+                }
             }else{
                 $curr_step = clone $result[0]->time;
                 if ($resolution == 'hour') {
@@ -79,7 +90,7 @@ class EStation
                                 $t = new DateTime($d);
                                 $t->sub($step);
                                 $response[$x][0] = $t->format('Y-m-d H:30');
-                                $response[$x][$s+1] = round($sum / $k, 1, PHP_ROUND_HALF_DOWN);
+                                $response[$x][$s+1] = intval(($sum / $k) * 1e1) / 1e1;
                             }
                         }else{
                             if ($k > 1) {
@@ -87,7 +98,7 @@ class EStation
                                 $t = new DateTime($d);
                                 $t->sub($step);
                                 $response[$x][0] = $t->format('Y-m-d H:30');
-                                $response[$x][$s+1] = round($sum / $k, 1, PHP_ROUND_HALF_DOWN);
+                                $response[$x][$s+1] = intval(($sum / $k) * 1e1) / 1e1;
                                 $x++;
                             }                           
                             $curr_step->add($step);
@@ -104,7 +115,7 @@ class EStation
                             if ($firstElem) {                          
                               $response[$x][$s+1] = null;                                
                             }else{
-                                $response[$x][$s+1] = round($sum / $k, 1, PHP_ROUND_HALF_DOWN);
+                                $response[$x][$s+1] = intval(($sum / $k) * 1e1) / 1e1; //round($sum / $k, 1);
                                 $firstElem = true;
                                 $sum = 0;
                             }

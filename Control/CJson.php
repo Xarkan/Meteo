@@ -51,9 +51,8 @@ class CJson
 				$sensors[0] = new ESensor($_POST['variable'],'');
 				$from = new DateTime($_POST['from-date']);
 				$to = new DateTime($_POST['to-date']);
-				$resolution = $_POST['resolution'];
 				$station->sensors = $sensors;
-				$result = $station->computeData($from, $to, $resolution);
+				$result = $station->computeData($from, $to);
 					
 				$view->print_json($result);
 			}

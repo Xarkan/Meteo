@@ -18,7 +18,7 @@ function loadChart() {
 }
 
 
-function setData(data, idchart) {
+function setChart(data, idchart) {
     let name = data.shift();
     let unit;
     if (name[1].unit == 'degC') {
@@ -26,8 +26,6 @@ function setData(data, idchart) {
     }else{
         unit = name[1].unit;
     }
-
-
     let array = [];
     for (var i = 0; i < data.length; i++) {
         let str = data[i][0].split(' ');
@@ -40,7 +38,7 @@ function setData(data, idchart) {
         }
         array[i] = { x: new Date(date[0],date[1],date[2],time[0],time[1]), y: yVal};   
     }
-    console.log(data);
+
     if (data.length == 0) {
         name[0].variable = 'no data in this period';
     }
@@ -80,7 +78,7 @@ function getData(id, idchart, params) {
         xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
         var response = JSON.parse(xmlhttp.responseText);
-            setData(response, idchart);        //idchart   
+            setChart(response, idchart);        //idchart   
         }
     };
     xmlhttp.open("POST","/Meteo/JSON/station/"+id, true);
@@ -105,45 +103,35 @@ function loadPage(id, chartlimit) {
     }
     //let n = d.getFullYear()+'-'+m+'-'+day;
     let n = '2019-03-01';
-    let var1 = document.getElementById("variable1").options[0].text;
-    let var2 = document.getElementById("variable2").options[1].text;
-    document.getElementById("variable2").options[1].selected = 'selected';
+
     document.getElementById("from-date").value = n;
     document.getElementById("to-date").value = n;
-    params1 = 'from-date='+n+'&to-date='+n+'&variable='+var1+'&resolution=max';
-    params2 = 'from-date='+n+'&to-date='+n+'&variable='+var2+'&resolution=max';
-    getData(id, 1, params1);
-    getData(id, 2, params2);
-    for (var i = 1; i <= chartlimit; i++) {
-        listener(id,i);
+    for (var i = 0; i < chartlimit; i++) {
+        let vElem = document.getElementById("variable"+(i+1)).options[i].text;
+        document.getElementById("variable"+(i+1)).options[i].selected = 'selected';
+        params = 'from-date='+n+'&to-date='+n+'&variable='+vElem;
+        getData(id, i+1, params);
     }
+
+    document.getElementById('load-btn').onclick = function() {
+        for (var i = 1; i <= chartlimit; i++) {
+            let p = getSelectedValues(i);
+            getData(id, i, p);
+        }
+    };
+
 }
 
-function listener(id, idchart) {
-    var from = '';
-    var to = '';
-    from = 'from-date='+document.getElementById("from-date").value;
-    document.getElementById("from-date").addEventListener("change", function() {
-        from = 'from-date='+this.value;
-    });
-    to = 'to-date='+document.getElementById("to-date").value;
-    document.getElementById("to-date").addEventListener("change", function() {
-        to = 'to-date='+this.value;
-        var tdate = this.value;
-        var tdateEntered = new Date(tdate);
-        console.log(tdate); //e.g. 2015-11-13
-    });
-
-    document.getElementById('load-btn'+idchart).addEventListener("click", function() {
-        var v = document.getElementById("variable"+idchart);
-        var vstrUser = v.options[v.selectedIndex].text;
-        var r = document.getElementById("resolution");
-        var rstrUser = r.options[r.selectedIndex].text;
-
-        params = from+'&'+to+'&variable='+vstrUser+'&resolution='+rstrUser;
-
-        getData(id, idchart, params);     
-    });
+function getSelectedValues(idchart = 0) {
+    let from = 'from-date='+document.getElementById("from-date").value;
+    let to = 'to-date='+document.getElementById("to-date").value;
+    let variable = '';
+    if (idchart > 0) {
+        let v = document.getElementById("variable"+idchart);
+        variable = '&variable='+v.options[v.selectedIndex].text;
+    } 
+    params = from+'&'+to+variable;
+    return params;
 }
 
 function addChart(id, idchart) {
@@ -155,33 +143,99 @@ function addChart(id, idchart) {
 
 }
 
-function selectCard(string) {
+function selectCard(id, string) {
     if (string == 'charts') {
         document.getElementById('nav-item-charts').className = "nav-link active";
         document.getElementById('nav-item-photos').className = "nav-link";
         document.getElementById('nav-item-table').className = "nav-link";
 
+        document.getElementById('variable1').style.disabled = false;
         document.getElementById('card-charts').style.display = "block";
         document.getElementById('card-photos').style.display = "none";
         document.getElementById('card-table').style.display = "none";
+        document.getElementById('load-btn').onclick = function() {
+            for (var i = 1; i <= 2; i++) { //dovrebbe essere chartlimit
+                let p = getSelectedValues(i);
+                getData(id, i, p);
+            }
+        };
     }
     if (string == 'photos') {
         document.getElementById('nav-item-charts').className = "nav-link";
         document.getElementById('nav-item-photos').className = "nav-link active";
         document.getElementById('nav-item-table').className = "nav-link";
 
+        document.getElementById('variable1').style.disabled = true;
         document.getElementById('card-charts').style.display = "none";
         document.getElementById('card-photos').style.display = "block";
         document.getElementById('card-table').style.display = "none";
+        document.getElementById('load-btn').onclick = function() {
+            //load delle foto
+        };
     }
     if (string == 'table') {
         document.getElementById('nav-item-charts').className = "nav-link";
         document.getElementById('nav-item-photos').className = "nav-link";
         document.getElementById('nav-item-table').className = "nav-link active";
 
+        document.getElementById('variable1').style.disabled = true;
         document.getElementById('card-charts').style.display = "none";
         document.getElementById('card-photos').style.display = "none";
         document.getElementById('card-table').style.display = "block";
+        document.getElementById('load-btn').onclick = function() {
+            params = getSelectedValues();
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                var response = xmlhttp.responseText;
+                    document.getElementById('table-container').innerHTML = response;
+                }
+            };
+            xmlhttp.open("POST","/Meteo/HTML/station/"+id, true); 
+            xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xmlhttp.send(params);
+        };
     }
 
+}
+
+function loadCharts(id, chartlimit) {
+    let f = document.getElementById("from-date").value;
+    let t = document.getElementById("to-date").value;
+
+    for (var i = 0; i < chartlimit; i++) {
+        let v = document.getElementById("variable"+(i+1)).options[i].text;
+        document.getElementById("variable"+(i+1)).options[i].selected = 'selected';
+        params = 'from-date='+f+'&to-date='+t+'&variable='+v;
+        getData(id, i+1, params);
+    }
+}
+
+function loadPhotos(id, params = 0) {
+    var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        var response = JSON.parse(xmlhttp.responseText);
+            //photo code
+        }
+    };
+    xmlhttp.open("POST","/Meteo/JSON/station/"+id, true); //altro path?
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp.send(params);
+}
+
+function loadTable(id) {
+    let f = document.getElementById("from-date").value;
+    let t = document.getElementById("to-date").value;
+    params = 'from-date='+f+'&to-date='+t;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+        var response = xmlhttp.responseText;
+            document.getElementById('table-container').innerHTML = response;
+        }
+    };
+    xmlhttp.open("POST","/Meteo/HTML/station/"+id, true); 
+    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp.send(params);
 }

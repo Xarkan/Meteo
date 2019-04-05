@@ -8,21 +8,26 @@ class CDebug
 	
 	function get_debug() {
 		$dbm = USingleton::getInstance('FDBmanager');
+		$view = USingleton::getInstance('View');
 
 		$user = new EUser('test@gmail.com');
 		$user->setName('pippo');
 		$temp = new EStation($user,'Monte Calvo');
 		$station = $dbm->load($temp);
-		$s[0] = new ESensor('temp','');
+		//$s[0] = new ESensor('temp','');
+		$s[0] = new ESensor('pressure','');
 		$station->sensors = $s;
-		$date = new DateTime('2019-03-01');
-		$r = 'hour';
-		$result = $station->computeData($date, $date, $r);
+		$date1 = new DateTime('2019-01-01');
+		$date2 = new DateTime('2019-02-02');
+		$r = 'max';
+		$result = $station->computeData($date1, $date2, $r);
 
-		//*
+		/*
 		echo "<pre>";
 		var_dump($result);
 		echo "</pre>";//*/
+
+		$view->print_json($result); //cambiare serialize_precision in php.ini da 100 a -1
 
 		/*$now = new DateTime();
 		$now->add(new DateInterval('PT2H'));

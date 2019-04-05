@@ -19,6 +19,11 @@ class View extends Smarty {
 
     public function setDataIntoTemplate( $reference, $data  ) {
         $this->assign( $reference, $data );
+    }
+
+    public function getHTML( $template )
+    {
+        return $this->fetch( $template );
     } 
 
     public function redirect($page) {

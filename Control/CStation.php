@@ -43,7 +43,7 @@ class CStation
 			$station = $dbm->load($temp);
 			if($station->getUser()->getMail() == $user->getMail() ) {
 				$dbc = USingleton::getInstance('FDBcustom');
-				$sensors = $dbc->load_station_sensors($station);
+				$sensors = $dbc->load_station_sensors($station);			
 				array_shift($sensors);
 	        	$user = $session->get_value('user');
 	        	$result = $dbm->list($station);
@@ -51,6 +51,19 @@ class CStation
 	        		$stations[$i]['name'] = $result[$i]->getName();
 	        		$stations[$i]['id'] = $result[$i]->getId();
 	        	}
+	        	$lastMeasure = $dbc->limit($station, 1);
+	        	$firstMeasure = $dbc->limit($station, 1, false);
+	        	$d = new DateTime($lastMeasure[0]['time']);
+	        	$dd = new DateTime($firstMeasure[0]['time']);
+	        	$lastMeasure[0]['time'] = $d->format('Y-m-d H:i');
+	        	$firstMeasure[0]['time'] = $dd->format('Y-m-d');
+	        	
+	        	$view->setDataIntoTemplate('firstMeasure', $firstMeasure[0]['time']);
+	        	$view->setDataIntoTemplate('lastMeasure', $lastMeasure[0]);
+	        	$view->setDataIntoTemplate('name', $station->getName());
+	        	$view->setDataIntoTemplate('altitude', $station->getAltitude());
+	        	$view->setDataIntoTemplate('latitude', $station->getLatitude());
+	        	$view->setDataIntoTemplate('longitude', $station->getLongitude());
 	        	$view->setDataIntoTemplate('chartlimit', $config['template']['chartlimit']);
 	        	$view->setDataIntoTemplate('id', $id);
 	        	$view->setDataIntoTemplate('stations', $stations);

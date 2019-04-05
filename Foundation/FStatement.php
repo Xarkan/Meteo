@@ -66,7 +66,7 @@ class FStatement
 		$firstElem = true;
 		for ($i=0; $i < count($c); $i++) { 
 			if($firstElem) {
-				$condStatement = $c[$i]->var." ".$c[$i]->operator." ?";	
+				$condStatement = $c[$i]->var." ".$c[$i]->operator." ?";					
 				$firstElem = false;
 			}else{
 				$condStatement = $condStatement." AND ".$c[$i]->var." ".$c[$i]->operator." ?";
